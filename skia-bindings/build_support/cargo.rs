@@ -128,20 +128,30 @@ pub fn host() -> Target {
 pub fn parse_target(target_str: impl AsRef<str>) -> Target {
     let target_str = target_str.as_ref();
     let target: Vec<String> = target_str.split('-').map(|s| s.into()).collect();
-    assert!(target.len() >= 3, "Failed to parse TARGET {}", target_str);
-
-    let abi = if target.len() > 3 {
-        Some(target[3].clone())
-    } else {
-        None
-    };
-
-    Target {
-        architecture: target[0].clone(),
-        vendor: target[1].clone(),
-        system: target[2].clone(),
-        abi,
+    assert!(target.len() >= 2, "Failed to parse TARGET {}", target_str);
+    if target.len()==2{
+        Target {
+            architecture: target[0].clone(),
+            vendor: "unknown".to_string(),
+            system: target[1].clone(),
+            abi: None,
+        }
     }
+    else {
+        let abi = if target.len() > 3 {
+            Some(target[3].clone())
+        } else {
+            None
+        };
+
+        Target {
+            architecture: target[0].clone(),
+            vendor: target[1].clone(),
+            system: target[2].clone(),
+            abi,
+        }
+    }
+
 }
 
 /// Returns `true` if the target should be built in release mode, `false`, if in debug mode.
